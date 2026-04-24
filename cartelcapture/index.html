@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cartel Capture</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #c0392b;
+      --red-dim: #7a1a13;
+      --gold:   #b8860b;
+      --off-white: #e8e0d0;
+      --muted:  #8a8070;
+      --bg:     #0a0906;
+      --bg2:    #100e0a;
+      --bg3:    #161310;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--off-white);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 3rem;
+      background: linear-gradient(to bottom, rgba(10,9,6,0.95), transparent);
+      transition: background 0.3s;
+    }
+    nav.scrolled { background: rgba(10,9,6,0.97); border-bottom: 1px solid rgba(192,57,43,0.2); }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.12em;
+      color: var(--off-white);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--red); }
+
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.78rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--off-white); }
+
+    .nav-yt {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--red);
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.55rem 1.2rem;
+      border-radius: 2px;
+      transition: background 0.2s;
+    }
+    .nav-yt:hover { background: #a93226; }
+    .nav-yt svg { width: 16px; height: 16px; fill: #fff; }
+
+    /* ── HERO ── */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 640px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('Cartel_Capture_BG.jpg');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.22;
+    }
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 70% 50%, rgba(192,57,43,0.07) 0%, transparent 70%),
+        linear-gradient(to bottom, rgba(10,9,6,0.4) 0%, rgba(10,9,6,0.7) 100%);
+    }
+
+    /* animated film grain */
+    .grain {
+      position: absolute;
+      inset: -50%;
+      width: 200%; height: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      animation: grain 0.5s steps(1) infinite;
+      pointer-events: none;
+    }
+    @keyframes grain {
+      0%,100%{transform:translate(0,0)}
+      10%{transform:translate(-2%,-3%)}
+      20%{transform:translate(3%,2%)}
+      30%{transform:translate(-1%,4%)}
+      40%{transform:translate(4%,-1%)}
+      50%{transform:translate(-3%,3%)}
+      60%{transform:translate(2%,-4%)}
+      70%{transform:translate(-4%,1%)}
+      80%{transform:translate(1%,-2%)}
+      90%{transform:translate(-2%,4%)}
+    }
+
+    /* vertical red lines */
+    .hero-lines {
+      position: absolute;
+      right: 8%;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, rgba(192,57,43,0.4) 30%, rgba(192,57,43,0.4) 70%, transparent);
+    }
+    .hero-lines::after {
+      content: '';
+      position: absolute;
+      left: 40px;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, rgba(192,57,43,0.15) 30%, rgba(192,57,43,0.15) 70%, transparent);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      padding: 0 3rem;
+      animation: fadeUp 1s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 1.5rem;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 30px;
+      height: 1px;
+      background: var(--red);
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 9vw, 8rem);
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+      color: var(--off-white);
+      margin-bottom: 1.5rem;
+    }
+    h1 em {
+      font-style: normal;
+      color: var(--red);
+    }
+
+    .hero-sub {
+      font-size: 1rem;
+      line-height: 1.75;
+      color: var(--muted);
+      max-width: 480px;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+    }
+
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--red);
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.85rem 1.8rem;
+      border-radius: 2px;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { background: #a93226; transform: translateY(-1px); }
+    .btn-primary svg { width: 18px; height: 18px; fill: #fff; }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      border: 1px solid rgba(232,224,208,0.2);
+      color: var(--off-white);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.85rem 1.8rem;
+      border-radius: 2px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .btn-ghost:hover { border-color: rgba(232,224,208,0.5); background: rgba(232,224,208,0.05); }
+
+    /* scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      animation: fadeUp 1s 0.5s ease both;
+    }
+    .scroll-hint::after {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background: var(--muted);
+    }
+
+    /* ── MARQUEE ── */
+    .marquee-wrap {
+      overflow: hidden;
+      border-top: 1px solid rgba(192,57,43,0.2);
+      border-bottom: 1px solid rgba(192,57,43,0.2);
+      background: var(--bg2);
+      padding: 0.9rem 0;
+    }
+    .marquee-track {
+      display: flex;
+      gap: 3rem;
+      width: max-content;
+      animation: marquee 30s linear infinite;
+    }
+    .marquee-item {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      white-space: nowrap;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .marquee-item .dot {
+      width: 4px; height: 4px;
+      background: var(--red);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── SECTION SHARED ── */
+    section { padding: 7rem 3rem; }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 1.2rem;
+    }
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 20px; height: 1px;
+      background: var(--red);
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      letter-spacing: 0.03em;
+      line-height: 1;
+      color: var(--off-white);
+      margin-bottom: 1rem;
+    }
+
+    /* ── UPCOMING ── */
+    #upcoming { background: var(--bg2); }
+
+    .upcoming-header {
+      max-width: 1200px;
+      margin: 0 auto 4rem;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .upcoming-intro { font-size: 0.95rem; color: var(--muted); max-width: 440px; line-height: 1.7; font-weight: 300; }
+
+    .videos-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .video-card {
+      position: relative;
+      background: var(--bg3);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 3px;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .video-card:hover { transform: translateY(-4px); border-color: rgba(192,57,43,0.3); }
+
+    .video-thumb {
+      position: relative;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      background: #1a1510;
+    }
+    .video-thumb img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(20%) contrast(1.1); transition: transform 0.4s, filter 0.4s; }
+    .video-card:hover .video-thumb img { transform: scale(1.04); filter: grayscale(0%) contrast(1.1); }
+
+    .video-thumb-placeholder {
+      width: 100%; height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1510, #0d0b08);
+    }
+    .thumb-icon { opacity: 0.12; }
+    .thumb-icon svg { width: 64px; height: 64px; fill: var(--off-white); }
+
+    .coming-soon-badge {
+      position: absolute;
+      top: 0.75rem; left: 0.75rem;
+      background: var(--red);
+      color: #fff;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.7rem;
+      border-radius: 1px;
+    }
+
+    .play-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.4);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .video-card:hover .play-overlay { opacity: 1; }
+    .play-overlay svg { width: 48px; height: 48px; fill: #fff; filter: drop-shadow(0 0 12px rgba(0,0,0,0.6)); }
+
+    .video-info { padding: 1.25rem; }
+    .video-tag {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+    .video-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      line-height: 1.4;
+      color: var(--off-white);
+      margin-bottom: 0.6rem;
+    }
+    .video-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+    .video-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+    .video-meta .status {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--red);
+    }
+    .status-dot {
+      width: 6px; height: 6px;
+      background: var(--red);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* ── MISSION ── */
+    #mission {
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mission-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .mission-quote {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-style: italic;
+      line-height: 1.5;
+      color: var(--off-white);
+      position: relative;
+      padding-left: 2rem;
+    }
+    .mission-quote::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--red), var(--gold));
+    }
+
+    .mission-body p {
+      font-size: 0.95rem;
+      line-height: 1.85;
+      color: var(--muted);
+      font-weight: 300;
+      margin-bottom: 1.25rem;
+    }
+    .mission-body p strong { color: var(--off-white); font-weight: 500; }
+
+    .stats-row {
+      display: flex;
+      gap: 2rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+    .stat-item { }
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem;
+      color: var(--off-white);
+      letter-spacing: 0.05em;
+    }
+    .stat-num span { color: var(--red); }
+    .stat-label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-top: 0.2rem; }
+
+    /* decorative map outline */
+    .mission-map {
+      position: absolute;
+      right: -5%;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40%;
+      opacity: 0.03;
+      pointer-events: none;
+    }
+
+    /* ── TOPICS ── */
+    #topics { background: var(--bg2); }
+
+    .topics-inner { max-width: 1200px; margin: 0 auto; }
+    .topics-header { margin-bottom: 3.5rem; }
+
+    .topics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .topic-tile {
+      background: var(--bg2);
+      padding: 2.25rem 2rem;
+      transition: background 0.3s;
+    }
+    .topic-tile:hover { background: var(--bg3); }
+
+    .topic-icon {
+      width: 40px; height: 40px;
+      margin-bottom: 1.25rem;
+      color: var(--red);
+    }
+
+    .topic-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.05em;
+      color: var(--off-white);
+      margin-bottom: 0.6rem;
+    }
+
+    .topic-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.7; }
+
+    /* ── CTA ── */
+    #cta {
+      background: var(--bg3);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      padding-bottom: 7rem;
+    }
+    #cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(192,57,43,0.08) 0%, transparent 70%);
+    }
+    .cta-inner { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+    .cta-inner .section-label { justify-content: center; }
+    .cta-inner .section-label::before { display: none; }
+    .cta-sub { font-size: 1rem; color: var(--muted); line-height: 1.7; margin-bottom: 2.5rem; font-weight: 300; }
+    .cta-actions { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 2.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 0.1em;
+      color: var(--off-white);
+      text-decoration: none;
+    }
+    .footer-logo span { color: var(--red); }
+    .footer-copy { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.05em; }
+    .footer-yt {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .footer-yt:hover { color: var(--red); }
+    .footer-yt svg { width: 18px; height: 18px; fill: currentColor; }
+    .footer-ig {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      transition: color 0.2s;
+    }
+    .footer-ig:hover { color: #e1306c; }
+    .footer-ig svg { width: 18px; height: 18px; fill: currentColor; }
+
+    /* ── ABOUT PAGE ── */
+    #about-page { display: none; }
+    #about-page.active { display: block; }
+    #citations-page { display: none; }
+    #citations-page.active { display: block; }
+    #main-content.hidden { display: none; }
+
+    /* ── CITATIONS ── */
+    .citations-hero {
+      min-height: 45vh;
+      display: flex;
+      align-items: center;
+      padding: 10rem 3rem 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .citations-hero-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 50% 70% at 60% 50%, rgba(192,57,43,0.06) 0%, transparent 70%);
+    }
+    .citations-hero-content { position: relative; z-index: 1; max-width: 720px; }
+
+    .citations-body {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 3rem 7rem;
+    }
+
+    .citation-group {
+      margin-bottom: 3.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding-bottom: 3.5rem;
+    }
+    .citation-group:last-child { border-bottom: none; }
+
+    .citation-group-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.05em;
+      color: var(--off-white);
+      margin-bottom: 0.4rem;
+    }
+    .citation-group-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .citation-group-tag::before { content: ''; display: block; width: 16px; height: 1px; background: var(--red); }
+
+    .citation-list { list-style: none; }
+    .citation-item {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 0.75rem;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      align-items: start;
+    }
+    .citation-item:last-child { border-bottom: none; }
+    .citation-num {
+      font-size: 0.7rem;
+      color: var(--red);
+      font-weight: 600;
+      padding-top: 0.1rem;
+    }
+    .citation-text {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .citation-text strong { color: var(--off-white); font-weight: 500; }
+    .citation-text a {
+      color: var(--gold);
+      text-decoration: none;
+      word-break: break-all;
+      font-size: 0.78rem;
+      display: block;
+      margin-top: 0.2rem;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    .citation-text a:hover { opacity: 1; }
+
+    .citations-disclaimer {
+      background: var(--bg3);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 2px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 3rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .citations-disclaimer strong { color: var(--off-white); }
+
+    @media (max-width: 768px) {
+      .citations-hero { padding: 8rem 1.25rem 4rem; }
+      .citations-body { padding: 0 1.25rem 4rem; }
+    }
+
+    .about-hero {
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      padding: 10rem 3rem 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .about-hero-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 50% 70% at 60% 50%, rgba(192,57,43,0.07) 0%, transparent 70%);
+    }
+    .about-hero-content { position: relative; z-index: 1; max-width: 720px; }
+    .about-hero h1 { font-size: clamp(3rem, 7vw, 6rem); }
+
+    .about-body {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 3rem 7rem;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 6rem;
+      align-items: start;
+    }
+
+    .about-text p {
+      font-size: 1rem;
+      line-height: 1.9;
+      color: var(--muted);
+      font-weight: 300;
+      margin-bottom: 1.5rem;
+    }
+    .about-text p strong { color: var(--off-white); font-weight: 500; }
+
+    .about-text h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 0.05em;
+      color: var(--off-white);
+      margin: 2.5rem 0 1rem;
+    }
+
+    .about-sidebar { position: sticky; top: 7rem; }
+
+    .sidebar-card {
+      background: var(--bg3);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 2px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .sidebar-card h4 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.1em;
+      color: var(--off-white);
+      margin-bottom: 1rem;
+    }
+    .sidebar-card ul { list-style: none; }
+    .sidebar-card ul li {
+      font-size: 0.82rem;
+      color: var(--muted);
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      line-height: 1.5;
+    }
+    .sidebar-card ul li::before {
+      content: '';
+      width: 4px; height: 4px;
+      background: var(--red);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .sidebar-card ul li:last-child { border-bottom: none; }
+
+    /* ── NOTIFY STRIP ── */
+    #notify {
+      background: var(--bg3);
+      padding: 5rem 3rem;
+      border-top: 1px solid rgba(192,57,43,0.2);
+      border-bottom: 1px solid rgba(192,57,43,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    #notify::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 50% 100% at 80% 50%, rgba(192,57,43,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .notify-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .notify-text .section-label { margin-bottom: 1rem; }
+    .notify-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      letter-spacing: 0.03em;
+      line-height: 1;
+      color: var(--off-white);
+      margin-bottom: 1rem;
+    }
+    .notify-sub {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.7;
+      font-weight: 300;
+      max-width: 380px;
+    }
+    .notify-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .notify-form input {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--off-white);
+      padding: 0.9rem 1.2rem;
+      font-size: 0.88rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      border-radius: 2px;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    .notify-form input::placeholder { color: #4a4540; }
+    .notify-form input:focus { border-color: rgba(192,57,43,0.5); }
+    .notify-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 0.9rem 1.8rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background 0.2s;
+      width: 100%;
+    }
+    .notify-btn:hover { background: #a93226; }
+    .notify-btn svg { width: 15px; height: 15px; fill: #fff; flex-shrink: 0; }
+    .notify-success {
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      background: rgba(42,107,60,0.15);
+      border: 1px solid rgba(42,107,60,0.3);
+      padding: 1rem 1.25rem;
+      border-radius: 2px;
+      font-size: 0.85rem;
+      color: #6fcf97;
+    }
+    .notify-success.show { display: flex; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 0.85rem 1.25rem; gap: 0.5rem; }
+      nav .nav-links { display: none; }
+      nav .nav-yt { padding: 0.45rem 0.9rem; font-size: 0.7rem; }
+      nav .nav-yt span { display: none; }
+      nav .nav-logo { font-size: 1.2rem; }
+      nav .nav-logo img { height: 24px; }
+
+      section { padding: 4rem 1.25rem; }
+      #cta { padding: 4rem 1.25rem; }
+      .hero-content { padding: 0 1.25rem; }
+      .scroll-hint { display: none; }
+
+      .upcoming-header { flex-direction: column; align-items: flex-start; }
+      .videos-grid { grid-template-columns: 1fr; }
+
+      .mission-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+      .stats-row { gap: 1.5rem; }
+
+      .topics-grid { grid-template-columns: 1fr 1fr; }
+      .topic-tile { padding: 1.5rem 1.25rem; }
+
+      #notify { padding: 4rem 1.25rem; }
+      .notify-inner { grid-template-columns: 1fr; gap: 2rem; }
+      .about-hero { padding: 8rem 1.25rem 4rem; }
+      .about-body { grid-template-columns: 1fr; gap: 3rem; padding: 0 1.25rem 4rem; }
+      .about-sidebar { position: static; }
+
+      footer { flex-direction: column; align-items: flex-start; padding: 2rem 1.25rem; gap: 1.25rem; }
+
+      .cta-inner .section-title { font-size: 2.5rem; }
+    }
+
+    @media (max-width: 480px) {
+      .topics-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 3.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo" onclick="showHome(event)"><img src="logo.png" alt="Cartel Capture Logo" style="height:32px;width:auto;vertical-align:middle;margin-right:0.5rem;">CARTEL<span>CAPTURE</span></a>
+    <ul class="nav-links">
+      <li><a href="#upcoming" onclick="showSection(event,'upcoming')">Upcoming</a></li>
+      <li><a href="#mission" onclick="showSection(event,'mission')">Mission</a></li>
+      <li><a href="#topics" onclick="showSection(event,'topics')">Topics</a></li>
+      <li><a href="#" onclick="showAbout(event)">About</a></li>
+      <li><a href="#" onclick="showCitations(event)">Citations</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+      <a href="https://instagram.com/cartelcapture" target="_blank" title="Instagram" style="color:var(--muted);display:flex;align-items:center;transition:color 0.2s;" onmouseover="this.style.color='#e1306c'" onmouseout="this.style.color='var(--muted)'">
+        <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.336 3.608 1.311.975.975 1.249 2.242 1.311 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.336 2.633-1.311 3.608-.975.975-2.242 1.249-3.608 1.311-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.336-3.608-1.311-.975-.975-1.249-2.242-1.311-3.608C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.062-1.366.336-2.633 1.311-3.608.975-.975 2.242-1.249 3.608-1.311 1.266-.058 1.646-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-1.613.074-3.067.48-4.222 1.635C1.676 2.862 1.27 4.316 1.196 5.93 1.138 7.21 1.124 7.618 1.124 12s.014 4.79.072 5.07c.074 1.613.48 3.067 1.635 4.222 1.155 1.155 2.609 1.561 4.222 1.635 1.28.058 1.688.072 4.947.072s3.667-.014 4.947-.072c1.613-.074 3.067-.48 4.222-1.635 1.155-1.155 1.561-2.609 1.635-4.222.058-1.28.072-1.688.072-4.947s-.014-3.667-.072-4.947c-.074-1.613-.48-3.067-1.635-4.222C19.067.694 17.613.288 16 .214 14.72.156 14.312.142 12 .142zM12 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+      </a>
+      <a href="https://youtube.com/@cartelcapture" target="_blank" class="nav-yt">
+        <svg viewBox="0 0 24 24"><path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.54 3.5 12 3.5 12 3.5s-7.54 0-9.38.55A3.02 3.02 0 0 0 .5 6.19C0 8.05 0 12 0 12s0 3.95.5 5.81a3.02 3.02 0 0 0 2.12 2.14C4.46 20.5 12 20.5 12 20.5s7.54 0 9.38-.55a3.02 3.02 0 0 0 2.12-2.14C24 15.95 24 12 24 12s0-3.95-.5-5.81zM9.75 15.5v-7l6.5 3.5-6.5 3.5z"/></svg>
+        Subscribe
+      </a>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div id="main-content">
+
+    <!-- HERO -->
+    <section id="hero">
+      <div class="hero-bg"></div>
+      <div class="grain"></div>
+      <div class="hero-lines"></div>
+      <div class="hero-content">
+        <div class="hero-eyebrow">Investigative Documentary Channel</div>
+        <h1>Power.<br><em>Corruption.</em><br>Exposed.</h1>
+        <p class="hero-sub">
+          Uncovering how crime groups, corrupt leaders, and dishonest officials use money and power to control what they should not — and the communities paying the price across South America.
+        </p>
+        <div class="hero-actions">
+          <a href="https://youtube.com/@cartelcapture" target="_blank" class="btn-primary">
+            <svg viewBox="0 0 24 24"><path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.54 3.5 12 3.5 12 3.5s-7.54 0-9.38.55A3.02 3.02 0 0 0 .5 6.19C0 8.05 0 12 0 12s0 3.95.5 5.81a3.02 3.02 0 0 0 2.12 2.14C4.46 20.5 12 20.5 12 20.5s7.54 0 9.38-.55a3.02 3.02 0 0 0 2.12-2.14C24 15.95 24 12 24 12s0-3.95-.5-5.81zM9.75 15.5v-7l6.5 3.5-6.5 3.5z"/></svg>
+            Watch on YouTube
+          </a>
+          <a href="#upcoming" class="btn-ghost">See Upcoming Videos</a>
+        </div>
+      </div>
+      <div class="scroll-hint">Scroll to explore</div>
+    </section>
+
+    <!-- MARQUEE -->
+    <div class="marquee-wrap">
+      <div class="marquee-track">
+        <div class="marquee-item"><span class="dot"></span> Cartel Networks</div>
+        <div class="marquee-item"><span class="dot"></span> Corrupt Officials</div>
+        <div class="marquee-item"><span class="dot"></span> Money Laundering</div>
+        <div class="marquee-item"><span class="dot"></span> Political Capture</div>
+        <div class="marquee-item"><span class="dot"></span> South America</div>
+        <div class="marquee-item"><span class="dot"></span> Investigative Journalism</div>
+        <div class="marquee-item"><span class="dot"></span> Power & Control</div>
+        <div class="marquee-item"><span class="dot"></span> Communities at Risk</div>
+        <!-- duplicate for seamless loop -->
+        <div class="marquee-item"><span class="dot"></span> Cartel Networks</div>
+        <div class="marquee-item"><span class="dot"></span> Corrupt Officials</div>
+        <div class="marquee-item"><span class="dot"></span> Money Laundering</div>
+        <div class="marquee-item"><span class="dot"></span> Political Capture</div>
+        <div class="marquee-item"><span class="dot"></span> South America</div>
+        <div class="marquee-item"><span class="dot"></span> Investigative Journalism</div>
+        <div class="marquee-item"><span class="dot"></span> Power & Control</div>
+        <div class="marquee-item"><span class="dot"></span> Communities at Risk</div>
+      </div>
+    </div>
+
+    <!-- UPCOMING VIDEOS -->
+    <section id="upcoming">
+      <div class="upcoming-header">
+        <div>
+          <div class="section-label">Coming Soon</div>
+          <div class="section-title">UPCOMING<br>INVESTIGATIONS</div>
+        </div>
+        <p class="upcoming-intro">New documentaries dropping soon. Each one follows the money, names the players, and shows how ordinary people pay the price for extraordinary greed.</p>
+      </div>
+
+      <div class="videos-grid">
+
+        <!-- Card 1 -->
+        <a href="https://youtu.be/dhRmWg1AFkU" target="_blank" class="video-card">
+          <div class="video-thumb">
+            <img src="thumb1.png" alt="The Special Forces That Created a Cartel" />
+            <div class="coming-soon-badge" style="background:var(--gold);">Watch Now</div>
+            <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          </div>
+          <div class="video-info">
+            <div class="video-tag">Drug Trafficking</div>
+            <div class="video-title">How Special Forces Training Created Los Zetas</div>
+            <div class="video-desc">How cocaine moves from jungle labs to global markets — and who profits at every step.</div>
+            <div class="video-meta">
+              <span class="status" style="color:var(--gold)"><span class="status-dot" style="background:var(--gold)"></span> Live on YouTube</span>
+              <span>South America</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Card 2 -->
+        <a href="https://youtube.com/@cartelcapture" target="_blank" class="video-card">
+          <div class="video-thumb">
+            <img src="thumb2.png" alt="How One Woman Built a Cartel Empire" />
+            <div class="coming-soon-badge">Coming Soon</div>
+            <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          </div>
+          <div class="video-info">
+            <div class="video-tag">Political Corruption</div>
+            <div class="video-title">The Most Brutal Woman in Narco History</div>
+            <div class="video-desc">Inside the deals between criminal organisations and the politicians who protect them.</div>
+            <div class="video-meta">
+              <span class="status"><span class="status-dot"></span> In Production</span>
+              <span>Colombia · Venezuela</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Card 3 -->
+        <a href="https://youtu.be/zyhLyU6dGAE" target="_blank" class="video-card">
+          <div class="video-thumb">
+            <img src="thumb3.png" alt="Pinochet's Kill Team Operated Inside the U.S. Capital" />
+            <div class="coming-soon-badge" style="background:var(--gold);">Watch Now</div>
+            <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          </div>
+          <div class="video-info">
+            <div class="video-tag">State Terror · Assassination</div>
+            <div class="video-title">Pinochet's Kill Team Operated Inside the U.S. Capital</div>
+            <div class="video-desc">How Pinochet's secret police carried out a car bomb assassination on the streets of Washington D.C. in 1976.</div>
+            <div class="video-meta">
+              <span class="status" style="color:var(--gold)"><span class="status-dot" style="background:var(--gold)"></span> Live on YouTube</span>
+              <span>Chile · USA</span>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- NOTIFY STRIP -->
+    <section id="notify">
+      <div class="notify-inner">
+        <div class="notify-text">
+          <div class="section-label">Don't Look Away</div>
+          <div class="notify-title">Get Notified When New<br>Investigations Drop</div>
+          <p class="notify-sub">No spam. No noise. Just an alert when we publish something that matters.</p>
+        </div>
+        <div>
+          <form class="notify-form" id="notifyForm">
+            <input type="text" id="notify-name" placeholder="Your name (optional)" autocomplete="name">
+            <input type="email" id="notify-email" placeholder="Your email address" required autocomplete="email">
+            <button type="submit" class="notify-btn">
+              <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+              Notify Me
+            </button>
+          </form>
+          <div class="notify-success" id="notifySuccess">
+            <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:#6fcf97;flex-shrink:0"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+            You're in. We'll notify you when the next investigation drops.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MISSION -->
+    <section id="mission">
+      <div class="mission-inner">
+        <div>
+          <div class="section-label">Our Mission</div>
+          <blockquote class="mission-quote">
+            "Truth is the most dangerous thing you can give to people living under a lie."
+          </blockquote>
+        </div>
+        <div class="mission-body">
+          <p>
+            <strong>Cartel Capture</strong> exists to shine a light on the networks of power, money, and violence that operate in the shadows of South American society — and to make that story accessible to everyone.
+          </p>
+          <p>
+            From the highland villages of Colombia to the favelas of Brazil, <strong>ordinary communities bear the weight</strong> of decisions made by extraordinary greed. We follow the evidence, name the names, and connect the dots that others leave undrawn.
+          </p>
+          <p>
+            No jargon. No spin. Just documented, researched, and clearly told stories of how power is stolen — and who pays for it.
+          </p>
+          <div class="stats-row">
+            <div class="stat-item">
+              <div class="stat-num">6<span>+</span></div>
+              <div class="stat-label">Countries Covered</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num">100<span>%</span></div>
+              <div class="stat-label">Independent</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num">0<span>x</span></div>
+              <div class="stat-label">Compromises Made</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOPICS -->
+    <section id="topics">
+      <div class="topics-inner">
+        <div class="topics-header">
+          <div class="section-label">What We Cover</div>
+          <div class="section-title">THE FULL PICTURE</div>
+        </div>
+        <div class="topics-grid">
+
+          <div class="topic-tile">
+            <svg class="topic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+            <div class="topic-name">Criminal Networks</div>
+            <div class="topic-desc">How cartels and crime groups are structured, funded, and protected — from the street to the boardroom.</div>
+          </div>
+
+          <div class="topic-tile">
+            <svg class="topic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6l9-4 9 4v6c0 5-4 9-9 10C7 21 3 17 3 12V6z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg>
+            <div class="topic-name">Political Capture</div>
+            <div class="topic-desc">When elected officials become instruments of the criminal groups they were voted in to fight.</div>
+          </div>
+
+          <div class="topic-tile">
+            <svg class="topic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2v10m0 0l-3-3m3 3l3-3M3 20h18M5 20V10m14 10V10M9 20v-6h6v6"/></svg>
+            <div class="topic-name">Money Laundering</div>
+            <div class="topic-desc">Following the dirty money through real estate, banks, and businesses as it becomes legitimate wealth.</div>
+          </div>
+
+          <div class="topic-tile">
+            <svg class="topic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3"/></svg>
+            <div class="topic-name">Communities & Impact</div>
+            <div class="topic-desc">The human cost — the villages, families, and futures destroyed when power operates without accountability.</div>
+          </div>
+
+          <div class="topic-tile">
+            <svg class="topic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+            <div class="topic-name">Territorial Control</div>
+            <div class="topic-desc">How armed groups carve up cities, roads, and trade routes — and what it means to live inside those borders.</div>
+          </div>
+
+          <div class="topic-tile">
+            <svg class="topic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            <div class="topic-name">Exposing Impunity</div>
+            <div class="topic-desc">Why the powerful rarely face justice — and the systems that keep them beyond reach of the law.</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section id="cta">
+      <div class="cta-inner">
+        <div class="section-label">Stay Informed</div>
+        <div class="section-title">DON'T LOOK AWAY</div>
+        <p class="cta-sub">Subscribe to Cartel Capture on YouTube to be notified the moment new investigations drop. Every view is a vote for accountability.</p>
+        <div class="cta-actions">
+          <a href="https://youtube.com/@cartelcapture" target="_blank" class="btn-primary">
+            <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:#fff"><path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.54 3.5 12 3.5 12 3.5s-7.54 0-9.38.55A3.02 3.02 0 0 0 .5 6.19C0 8.05 0 12 0 12s0 3.95.5 5.81a3.02 3.02 0 0 0 2.12 2.14C4.46 20.5 12 20.5 12 20.5s7.54 0 9.38-.55a3.02 3.02 0 0 0 2.12-2.14C24 15.95 24 12 24 12s0-3.95-.5-5.81zM9.75 15.5v-7l6.5 3.5-6.5 3.5z"/></svg>
+            Subscribe on YouTube
+          </a>
+          <a href="#" onclick="showAbout(event)" class="btn-ghost">Our Story</a>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /#main-content -->
+
+  <!-- ABOUT PAGE -->
+  <div id="about-page">
+    <div class="about-hero">
+      <div class="about-hero-bg"></div>
+      <div class="grain"></div>
+      <div class="about-hero-content">
+        <div class="section-label">Who We Are</div>
+        <h1>ABOUT<br><em style="color:var(--red)">CARTEL<br>CAPTURE</em></h1>
+      </div>
+    </div>
+
+    <div class="about-body">
+      <div class="about-text">
+        <p>
+          <strong>Cartel Capture</strong> is an independent investigative documentary YouTube channel focused on one question: how do bad people use money and power to control things they should not control?
+        </p>
+        <p>
+          Across South America, criminal organisations, corrupt government officials, and dishonest leaders have built systems that funnel wealth upward, silence dissent, and leave communities trapped in cycles of violence and poverty. These systems are complex — deliberately so. Our job is to make them legible.
+        </p>
+
+        <h3>WHY THIS MATTERS</h3>
+        <p>
+          The stories we tell are not just about crime. They are about <strong>democracy, sovereignty, and the social contract</strong>. When a cartel controls a mayor, when a police chief is on the payroll, when a billion dollars flows through a country's banks without scrutiny — something fundamental is broken.
+        </p>
+        <p>
+          We believe that understanding how these systems work is the first step to dismantling them. An informed audience is a powerful audience. That is why we make our documentaries accessible, clear, and free.
+        </p>
+
+        <h3>OUR APPROACH</h3>
+        <p>
+          Every investigation starts with a question. It ends with evidence. We follow the money, map the relationships, and show our work. We do not sensationalise or speculate. We document.
+        </p>
+        <p>
+          We cover the full spectrum of how criminal power operates — from street-level territorial control in Brazilian favelas to the financial corridors where cartel billions are cleaned and reinvested. From the Colombian highlands to the corridors of government in Caracas and Buenos Aires.
+        </p>
+
+        <h3>INDEPENDENCE</h3>
+        <p>
+          <strong>Cartel Capture is fully independent.</strong> We are not funded by political interests, governments, or corporate sponsors with stakes in the stories we tell. That independence is not just a principle — it is the entire point. We can only do this work because we answer to our audience and no one else.
+        </p>
+
+        <div style="margin-top:3rem">
+          <a href="https://youtube.com/@cartelcapture" target="_blank" class="btn-primary">
+            <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:#fff"><path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.54 3.5 12 3.5 12 3.5s-7.54 0-9.38.55A3.02 3.02 0 0 0 .5 6.19C0 8.05 0 12 0 12s0 3.95.5 5.81a3.02 3.02 0 0 0 2.12 2.14C4.46 20.5 12 20.5 12 20.5s7.54 0 9.38-.55a3.02 3.02 0 0 0 2.12-2.14C24 15.95 24 12 24 12s0-3.95-.5-5.81zM9.75 15.5v-7l6.5 3.5-6.5 3.5z"/></svg>
+            Watch on YouTube
+          </a>
+        </div>
+      </div>
+
+      <div class="about-sidebar">
+        <div class="sidebar-card">
+          <h4>REGIONS WE COVER</h4>
+          <ul>
+            <li>Colombia</li>
+            <li>Brazil</li>
+            <li>Venezuela</li>
+            <li>Mexico</li>
+            <li>Peru</li>
+            <li>Argentina</li>
+            <li>Ecuador</li>
+          </ul>
+        </div>
+        <div class="sidebar-card">
+          <h4>TOPICS</h4>
+          <ul>
+            <li>Drug Trafficking & Cartels</li>
+            <li>Political Corruption</li>
+            <li>Money Laundering</li>
+            <li>Territorial Control</li>
+            <li>Judicial Impunity</li>
+            <li>Impact on Communities</li>
+          </ul>
+        </div>
+        <div class="sidebar-card">
+          <h4>FIND US</h4>
+          <ul>
+            <li>YouTube — @cartelcapture</li>
+            <li>Instagram — @cartelcapture</li>
+            <li id="about-email-link">Email — <span class="obf-email" data-u="cartelcapture" data-d="gmail.com"></span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div><!-- /#about-page -->
+
+  <!-- CITATIONS PAGE -->
+  <div id="citations-page">
+    <div class="citations-hero">
+      <div class="citations-hero-bg"></div>
+      <div class="grain"></div>
+      <div class="citations-hero-content">
+        <div class="section-label">Transparency</div>
+        <h1>SOURCES &amp;<br><em style="color:var(--red)">CITATIONS</em></h1>
+      </div>
+    </div>
+
+    <div class="citations-body">
+      <div class="citations-disclaimer">
+        <strong>Our commitment to accuracy:</strong> Every claim made in Cartel Capture investigations is supported by verifiable sources. Where sources are confidential, that is noted. We update citations as new information becomes available.
+      </div>
+
+      <!-- Investigation 1 -->
+      <div class="citation-group">
+        <div class="citation-group-title">How Special Forces Training Created Los Zetas</div>
+        <div class="citation-group-tag">Drug Trafficking · South America</div>
+        <ul class="citation-list">
+          <li class="citation-item">
+            <span class="citation-num">[1]</span>
+            <div class="citation-text">
+              <strong>InSight Crime</strong> — "Los Zetas: The Evolution of a Criminal Corporation" (2021). Background on military-trained cartel founders and their operational structure.
+              <a href="https://insightcrime.org" target="_blank">insightcrime.org</a>
+            </div>
+          </li>
+          <li class="citation-item">
+            <span class="citation-num">[2]</span>
+            <div class="citation-text">
+              <strong>UNODC World Drug Report</strong> — United Nations Office on Drugs and Crime, Annual Report (2023). Data on trafficking routes and production volumes.
+              <a href="https://unodc.org" target="_blank">unodc.org</a>
+            </div>
+          </li>
+          <li class="citation-item">
+            <span class="citation-num">[3]</span>
+            <div class="citation-text">
+              <strong>El País</strong> — Investigative reporting on special forces defections and cartel formation in Latin America (2020–2022).
+              <a href="https://elpais.com" target="_blank">elpais.com</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Investigation 2 -->
+      <div class="citation-group">
+        <div class="citation-group-title">The Most Brutal Woman in Narco History</div>
+        <div class="citation-group-tag">Political Corruption · Colombia · Venezuela</div>
+        <ul class="citation-list">
+          <li class="citation-item">
+            <span class="citation-num">[1]</span>
+            <div class="citation-text">
+              <strong>DEA Case Files</strong> — U.S. Drug Enforcement Administration public indictment records and press releases related to cartel leadership.
+              <a href="https://dea.gov" target="_blank">dea.gov</a>
+            </div>
+          </li>
+          <li class="citation-item">
+            <span class="citation-num">[2]</span>
+            <div class="citation-text">
+              <strong>Semana Magazine (Colombia)</strong> — Investigative series on female leadership within Colombian trafficking networks (2019–2023).
+              <a href="https://semana.com" target="_blank">semana.com</a>
+            </div>
+          </li>
+          <li class="citation-item">
+            <span class="citation-num">[3]</span>
+            <div class="citation-text">
+              <strong>Reuters Investigates</strong> — "The rise of women in Latin American drug cartels" (2022). Statistical analysis and case studies.
+              <a href="https://reuters.com" target="_blank">reuters.com</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Investigation 3 -->
+      <div class="citation-group">
+        <div class="citation-group-title">Pinochet's Kill Team Operated Inside the U.S. Capital</div>
+        <div class="citation-group-tag">Money &amp; Power · Brazil · Argentina</div>
+        <ul class="citation-list">
+          <li class="citation-item">
+            <span class="citation-num">[1]</span>
+            <div class="citation-text">
+              <strong>The National Security Archive (GWU)</strong> — Declassified CIA documents relating to covert operations in South America, 1970s–1990s.
+              <a href="https://nsarchive.gwu.edu" target="_blank">nsarchive.gwu.edu</a>
+            </div>
+          </li>
+          <li class="citation-item">
+            <span class="citation-num">[2]</span>
+            <div class="citation-text">
+              <strong>The Intercept</strong> — "Operation Condor and the legacy of U.S.-backed terror networks in South America" (2021).
+              <a href="https://theintercept.com" target="_blank">theintercept.com</a>
+            </div>
+          </li>
+          <li class="citation-item">
+            <span class="citation-num">[3]</span>
+            <div class="citation-text">
+              <strong>CONADEP Report (Argentina)</strong> — National Commission on the Disappearance of Persons, official government report (1984). Primary source documentation.
+              <a href="https://www.argentina.gob.ar" target="_blank">argentina.gob.ar</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div><!-- /#citations-page -->
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="#" class="footer-logo" onclick="showHome(event)"><img src="logo.png" alt="Cartel Capture Logo" style="height:24px;width:auto;vertical-align:middle;margin-right:0.5rem;">CARTEL<span>CAPTURE</span></a>
+    <span class="footer-copy">© 2025 Cartel Capture. All rights reserved.</span>
+    <div style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;">
+      <a href="#" class="footer-yt obf-email-link" data-u="cartelcapture" data-d="gmail.com" style="cursor:pointer;">
+        <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        <span class="obf-email" data-u="cartelcapture" data-d="gmail.com"></span>
+      </a>
+      <a href="https://youtube.com/@cartelcapture" target="_blank" class="footer-yt">
+        <svg viewBox="0 0 24 24"><path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.54 3.5 12 3.5 12 3.5s-7.54 0-9.38.55A3.02 3.02 0 0 0 .5 6.19C0 8.05 0 12 0 12s0 3.95.5 5.81a3.02 3.02 0 0 0 2.12 2.14C4.46 20.5 12 20.5 12 20.5s7.54 0 9.38-.55a3.02 3.02 0 0 0 2.12-2.14C24 15.95 24 12 24 12s0-3.95-.5-5.81zM9.75 15.5v-7l6.5 3.5-6.5 3.5z"/></svg>
+        @cartelcapture
+      </a>
+      <a href="https://instagram.com/cartelcapture" target="_blank" class="footer-ig">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.336 3.608 1.311.975.975 1.249 2.242 1.311 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.336 2.633-1.311 3.608-.975.975-2.242 1.249-3.608 1.311-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.336-3.608-1.311-.975-.975-1.249-2.242-1.311-3.608C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.062-1.366.336-2.633 1.311-3.608.975-.975 2.242-1.249 3.608-1.311 1.266-.058 1.646-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-1.613.074-3.067.48-4.222 1.635C1.676 2.862 1.27 4.316 1.196 5.93 1.138 7.21 1.124 7.618 1.124 12s.014 4.79.072 5.07c.074 1.613.48 3.067 1.635 4.222 1.155 1.155 2.609 1.561 4.222 1.635 1.28.058 1.688.072 4.947.072s3.667-.014 4.947-.072c1.613-.074 3.067-.48 4.222-1.635 1.155-1.155 1.561-2.609 1.635-4.222.058-1.28.072-1.688.072-4.947s-.014-3.667-.072-4.947c-.074-1.613-.48-3.067-1.635-4.222C19.067.694 17.613.288 16 .214 14.72.156 14.312.142 12 .142zM12 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+        @cartelcapture
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    // ── NOTIFY FORM ──
+    document.getElementById('notifyForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button');
+      const name = document.getElementById('notify-name').value;
+      const email = document.getElementById('notify-email').value;
+
+      btn.textContent = 'Sending…';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('https://cartel-subscribe-worker.darrenclarke.workers.dev', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          document.getElementById('notifyForm').style.display = 'none';
+          document.getElementById('notifySuccess').classList.add('show');
+        } else {
+          btn.textContent = data.error || 'Something went wrong. Try again.';
+          btn.style.background = '#7a1a13';
+          btn.disabled = false;
+          setTimeout(() => {
+            btn.innerHTML = '<svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:#fff"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg> Notify Me';
+            btn.style.background = '';
+          }, 3000);
+        }
+      } catch {
+        btn.textContent = 'Network error. Try again.';
+        btn.style.background = '#7a1a13';
+        btn.disabled = false;
+        setTimeout(() => {
+          btn.innerHTML = '<svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:#fff"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg> Notify Me';
+          btn.style.background = '';
+        }, 3000);
+      }
+    });
+
+    // Nav scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Page routing
+    function showSection(e, id) {
+      e.preventDefault();
+      document.getElementById('about-page').classList.remove('active');
+      document.getElementById('citations-page').classList.remove('active');
+      document.getElementById('main-content').classList.remove('hidden');
+      setTimeout(() => {
+        document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+      }, 50);
+    }
+
+    function hideAll() {
+      document.getElementById('main-content').classList.add('hidden');
+      document.getElementById('about-page').classList.remove('active');
+      document.getElementById('citations-page').classList.remove('active');
+    }
+
+    function showAbout(e) {
+      e.preventDefault();
+      hideAll();
+      document.getElementById('about-page').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showCitations(e) {
+      e.preventDefault();
+      hideAll();
+      document.getElementById('citations-page').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showHome(e) {
+      e.preventDefault();
+      document.getElementById('about-page').classList.remove('active');
+      document.getElementById('citations-page').classList.remove('active');
+      document.getElementById('main-content').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Email obfuscation — assembles address client-side so bots can't scrape it
+    document.querySelectorAll('.obf-email').forEach(el => {
+      const addr = el.dataset.u + '@' + el.dataset.d;
+      el.textContent = addr;
+    });
+    document.querySelectorAll('.obf-email-link').forEach(el => {
+      const addr = el.dataset.u + '@' + el.dataset.d;
+      el.href = 'mailto:' + addr;
+    });
+
+    // Scroll-reveal animation
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.video-card, .topic-tile, .stat-item, .sidebar-card').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>
