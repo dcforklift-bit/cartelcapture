@@ -969,6 +969,10 @@
   </style>
 </head>
 <body>
+  <!-- Lightbox overlay -->
+  <div id="lightbox">
+    <div id="lightbox-inner"></div>
+  </div>
 
   <!-- NAV -->
   <nav id="navbar">
@@ -1587,10 +1591,5 @@
       card.addEventListener('click', () => openLightbox(card.dataset.videoId));
     });
   </script>
-
-  <!-- Lightbox overlay -->
-  <div id="lightbox">
-    <div id="lightbox-inner"></div>
-  </div>
 </body>
 </html>
