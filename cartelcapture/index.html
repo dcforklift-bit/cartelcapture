@@ -1389,6 +1389,65 @@
       </div>
     </section>
 
+    <!-- LEAD MAGNET -->
+    <section id="lead-magnet" style="background:var(--bg2);border-top:1px solid rgba(192,57,43,0.15);border-bottom:1px solid rgba(192,57,43,0.15);">
+      <div style="max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;">
+
+        <!-- Left: Copy -->
+        <div>
+          <div class="section-label" style="margin-bottom:1.25rem;">Free Download</div>
+          <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,4vw,3.4rem);line-height:1;color:var(--off-white);margin-bottom:0.75rem;">The 10 Cartel Stories<br><em style="color:var(--red);">Netflix Will Never Make</em></h2>
+          <p style="font-size:0.85rem;color:var(--muted);letter-spacing:0.05em;margin-bottom:2rem;">Free. Yours instantly. No credit card.</p>
+
+          <p style="font-size:0.95rem;line-height:1.8;color:var(--muted);margin-bottom:1.5rem;">Netflix made Narcos. Netflix made Griselda.<br>But there are stories they will never touch.</p>
+          <p style="font-size:0.95rem;line-height:1.8;color:var(--muted);margin-bottom:2rem;">Stories that implicate governments. Intelligence agencies. Banks. People still in power. Cartel Capture has compiled 10 of those stories into a free PDF — fully researched, no jargon, no spin.</p>
+
+          <ul style="list-style:none;margin:0 0 2.5rem;padding:0;display:flex;flex-direction:column;gap:0.85rem;">
+            <li style="display:flex;gap:0.75rem;align-items:flex-start;font-size:0.88rem;color:var(--off-white);line-height:1.5;"><span style="color:var(--red);flex-shrink:0;margin-top:2px;">→</span>The CIA-backed Nazi who ran Bolivia's cocaine coup</li>
+            <li style="display:flex;gap:0.75rem;align-items:flex-start;font-size:0.88rem;color:var(--off-white);line-height:1.5;"><span style="color:var(--red);flex-shrink:0;margin-top:2px;">→</span>How Griselda Blanco turned Miami into a war zone</li>
+            <li style="display:flex;gap:0.75rem;align-items:flex-start;font-size:0.88rem;color:var(--off-white);line-height:1.5;"><span style="color:var(--red);flex-shrink:0;margin-top:2px;">→</span>The global bank that laundered billions for cartels and the CIA — and why almost nobody went to prison</li>
+            <li style="display:flex;gap:0.75rem;align-items:flex-start;font-size:0.88rem;color:var(--off-white);line-height:1.5;"><span style="color:var(--red);flex-shrink:0;margin-top:2px;">→</span>The Mexican cartel boss who ran his empire from inside three separate prisons</li>
+            <li style="display:flex;gap:0.75rem;align-items:flex-start;font-size:0.88rem;color:var(--off-white);line-height:1.5;"><span style="color:var(--red);flex-shrink:0;margin-top:2px;">→</span>The DEA relationship that allowed one cartel to eliminate all its rivals</li>
+            <li style="display:flex;gap:0.75rem;align-items:flex-start;font-size:0.88rem;color:var(--muted);line-height:1.5;font-style:italic;"><span style="color:var(--red);flex-shrink:0;margin-top:2px;">→</span>And six more investigations mainstream media won't go near.</li>
+          </ul>
+        </div>
+
+        <!-- Right: Form -->
+        <div>
+          <div style="background:var(--bg3);border:1px solid rgba(192,57,43,0.2);border-radius:4px;padding:2.5rem;">
+            <p style="font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--red);margin-bottom:1rem;">Enter your email. Get it instantly.</p>
+            <form id="leadMagnetForm" style="display:flex;flex-direction:column;gap:0.85rem;">
+              <input type="text" id="lm-name" placeholder="Your name (optional)" autocomplete="name"
+                style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:var(--off-white);padding:0.85rem 1rem;font-size:0.88rem;border-radius:2px;outline:none;font-family:'Inter',sans-serif;transition:border-color 0.2s;"
+                onfocus="this.style.borderColor='rgba(192,57,43,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+              <input type="email" id="lm-email" placeholder="Your email address" required autocomplete="email"
+                style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:var(--off-white);padding:0.85rem 1rem;font-size:0.88rem;border-radius:2px;outline:none;font-family:'Inter',sans-serif;transition:border-color 0.2s;"
+                onfocus="this.style.borderColor='rgba(192,57,43,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+              <button type="submit"
+                style="background:var(--red);color:#fff;border:none;padding:1rem;font-size:0.8rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;border-radius:2px;cursor:pointer;transition:background 0.2s;font-family:'Inter',sans-serif;"
+                onmouseover="this.style.background='#a93226'" onmouseout="this.style.background='var(--red)'">
+                Send Me The Free PDF →
+              </button>
+            </form>
+            <div id="leadMagnetSuccess" style="display:none;text-align:center;padding:1rem 0;">
+              <svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:#6fcf97;margin-bottom:0.75rem;"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+              <p style="color:var(--off-white);font-size:0.95rem;font-weight:600;margin:0 0 0.5rem;">Check your inbox.</p>
+              <p style="color:var(--muted);font-size:0.82rem;margin:0;">Your PDF is on its way. Check your spam folder and mark us as safe.</p>
+            </div>
+            <p style="font-size:0.72rem;color:var(--muted);margin-top:1rem;text-align:center;line-height:1.6;">No spam. Unsubscribe any time.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Mobile styles -->
+      <style>
+        @media(max-width:768px){
+          #lead-magnet > div { grid-template-columns:1fr!important; gap:2.5rem!important; }
+        }
+      </style>
+    </section>
+
     <!-- NOTIFY STRIP -->
     <section id="notify">
       <div class="notify-inner">
@@ -1855,6 +1914,48 @@
   </footer>
 
   <script>
+    // ── LEAD MAGNET FORM ──
+    document.getElementById('leadMagnetForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button');
+      const name = document.getElementById('lm-name').value;
+      const email = document.getElementById('lm-email').value;
+
+      btn.textContent = 'Sending…';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('https://cartel-leadmagnet-worker.darrenclarke.workers.dev', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          document.getElementById('leadMagnetForm').style.display = 'none';
+          document.getElementById('leadMagnetSuccess').style.display = 'block';
+        } else {
+          btn.textContent = data.error || 'Something went wrong. Try again.';
+          btn.style.background = '#7a1a13';
+          btn.disabled = false;
+          setTimeout(() => {
+            btn.textContent = 'Send Me The Free PDF →';
+            btn.style.background = '';
+          }, 3000);
+        }
+      } catch {
+        btn.textContent = 'Something went wrong. Try again.';
+        btn.style.background = '#7a1a13';
+        btn.disabled = false;
+        setTimeout(() => {
+          btn.textContent = 'Send Me The Free PDF →';
+          btn.style.background = '';
+        }, 3000);
+      }
+    });
+
     // ── NOTIFY FORM ──
     document.getElementById('notifyForm').addEventListener('submit', async (e) => {
       e.preventDefault();
