@@ -2029,7 +2029,7 @@
     });
 
     // ── NOTIFY FORM ──
-    document.getElementById('notifyForm').addEventListener('submit', async (e) => {
+    if (document.getElementById('notifyForm')) document.getElementById('notifyForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = e.target.querySelector('button');
       const name = document.getElementById('notify-name').value;
