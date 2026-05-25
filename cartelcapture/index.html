@@ -2163,7 +2163,12 @@
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
     document.querySelectorAll('.video-card[data-video-id]').forEach(card => {
-      card.addEventListener('click', () => openLightbox(card.dataset.videoId));
+      const badge = card.querySelector('.coming-soon-badge');
+      if (badge && badge.textContent.trim() === 'Watch Now') {
+        card.addEventListener('click', () => openLightbox(card.dataset.videoId));
+      } else {
+        card.style.cursor = 'default';
+      }
     });
   </script>
 </body>
