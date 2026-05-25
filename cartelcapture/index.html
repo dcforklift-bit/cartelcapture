@@ -2151,7 +2151,7 @@
 
     window.openLightbox = function(videoId) {
       const inner = document.getElementById('lightbox-inner');
-      inner.innerHTML = `<button id="lightbox-close" onclick="closeLightbox()">✕</button><iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+      inner.innerHTML = `<button id="lightbox-close" onclick="closeLightbox()">✕</button><iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
       document.getElementById('lightbox').classList.add('open');
       document.body.style.overflow = 'hidden';
     };
@@ -2163,12 +2163,7 @@
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
     document.querySelectorAll('.video-card[data-video-id]').forEach(card => {
-      const badge = card.querySelector('.coming-soon-badge');
-      if (badge && badge.textContent.trim() === 'Watch Now') {
-        card.addEventListener('click', () => openLightbox(card.dataset.videoId));
-      } else {
-        card.style.cursor = 'default';
-      }
+      card.addEventListener('click', () => openLightbox(card.dataset.videoId));
     });
   </script>
 </body>
